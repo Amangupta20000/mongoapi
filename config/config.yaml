@@ -1,0 +1,4 @@
+# config/config.yaml
+database:
+  dbName: "netflix"
+  collectionName: "watchlist"

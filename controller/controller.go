@@ -15,14 +15,35 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"gopkg.in/yaml.v2"
 )
 
-// const connectionString = "mongodb+srv://a20000gupta:Aman.1234@cluster0.ajw4s.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-const dbName = "netflix"
-const colName = "watchlist"
+// Struct to hold YAML config
+type Config struct {
+	Database struct {
+		DBName         string `yaml:"dbName"`
+		CollectionName string `yaml:"collectionName"`
+	} `yaml:"database"`
+}
 
 // MOST IMPORTANT
 var collection *mongo.Collection
+var config Config
+
+func loadConfig() error {
+	// Use os.ReadFile instead of ioutil.ReadFile
+	yamlFile, err := os.ReadFile("config/config.yaml")
+	if err != nil {
+		return fmt.Errorf("error reading config file: %v", err)
+	}
+
+	// Unmarshal the YAML file into the config struct
+	err = yaml.Unmarshal(yamlFile, &config)
+	if err != nil {
+		return fmt.Errorf("error unmarshalling config file: %v", err)
+	}
+	return nil
+}
 
 // Connect with mongoDB
 func init() {
@@ -39,6 +60,12 @@ func init() {
 		log.Fatal("MONGODB_URL not found in .env file")
 	}
 
+	// Load the YAML config
+	err = loadConfig()
+	if err != nil {
+		log.Fatalf("error loading config: %v", err)
+	}
+
 	// client option
 	clientOptions := options.Client().ApplyURI(connectionString)
 
@@ -50,7 +77,7 @@ func init() {
 	}
 	fmt.Println("mongodb connection success")
 
-	collection = client.Database(dbName).Collection(colName)
+	collection = client.Database(config.Database.DBName).Collection(config.Database.CollectionName)
 
 	// if collection instance is ready
 	fmt.Println("collection instance/reference is ready")
