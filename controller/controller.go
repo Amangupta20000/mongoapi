@@ -256,8 +256,41 @@ func FindOneMovie(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(movie)
 }
 
+var validCities = map[string]bool{
+	"delhi":     true,
+	"mumbai":    true,
+	"bangalore": true,
+	"chennai":   true,
+	"kolkata":   true,
+	// Add more cities as needed
+}
+
+func isValidCity(city string) bool {
+	_, exists := validCities[city]
+	return exists
+}
+
 func CheckWeather(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/x-www-form-urlencode")
-	// params := mux.Vars(r)
-	json.NewEncoder(w).Encode("Weather is 25 deg. Seems Cool")
+	params := mux.Vars(r)
+	city, exists := params["city"] // Get the "city" parameter
+	if !exists {
+		http.Error(w, "City parameter is missing", http.StatusBadRequest)
+		return
+	}
+
+	if !isValidCity(city) {
+		http.Error(w, "Invalid city", http.StatusBadRequest)
+		return
+	}
+
+	// Sample weather data for demonstration purposes
+	weather := "25 deg" // Hardcoded for demonstration, replace this with real data fetching logic
+	response := map[string]string{
+		"city":    city,
+		"weather": weather,
+	}
+
+	// Return the response as JSON
+	json.NewEncoder(w).Encode(response)
 }
