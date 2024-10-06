@@ -255,3 +255,9 @@ func FindOneMovie(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(movie)
 }
+
+func CheckWeather(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/x-www-form-urlencode")
+	// params := mux.Vars(r)
+	json.NewEncoder(w).Encode("Weather is 25 deg. Seems Cool")
+}
