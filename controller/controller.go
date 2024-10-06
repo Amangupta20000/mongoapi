@@ -10,7 +10,8 @@ import (
 
 	"github.com/Amangupta20000/mongoapi/model"
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
+
+	// "github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -45,42 +46,42 @@ func loadConfig() error {
 	return nil
 }
 
-// Connect with mongoDB
+// Connect with MongoDB
 func init() {
 
 	// Load the .env file
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 
 	// Get MongoDB URL from environment variables
 	connectionString := os.Getenv("MONGODB_URL")
 	if connectionString == "" {
-		log.Fatal("MONGODB_URL not found in .env file")
+		log.Fatal("MONGODB_URL not set in environment variables")
 	}
 
 	// Load the YAML config
-	err = loadConfig()
+	// err = loadConfig()
+	err := loadConfig()
 	if err != nil {
 		log.Fatalf("error loading config: %v", err)
 	}
 
-	// client option
+	// Client options
 	clientOptions := options.Client().ApplyURI(connectionString)
 
-	// connect to mongoDB
+	// Connect to MongoDB
 	client, err := mongo.Connect(context.TODO(), clientOptions)
-
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("mongodb connection success")
+	fmt.Println("MongoDB connection success")
 
 	collection = client.Database(config.Database.DBName).Collection(config.Database.CollectionName)
 
-	// if collection instance is ready
-	fmt.Println("collection instance/reference is ready")
+	// If collection instance is ready
+	fmt.Println("Collection instance/reference is ready")
 }
 
 // MongoDB Helpers -file

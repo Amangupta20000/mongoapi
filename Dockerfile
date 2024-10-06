@@ -24,7 +24,7 @@ FROM gcr.io/distroless/base
 COPY --from=builder /app/main .
 
 # Copy the .env file from the builder stage to the final image
-COPY --from=builder /app/.env .
+# COPY --from=builder /app/.env .
 
 # Copy the config.yaml file from the builder stage to the final image
 COPY --from=builder /app/config /config
