@@ -20,9 +20,14 @@ RUN go build -o main .
 # Start a new stage from scratch
 FROM gcr.io/distroless/base
 
-# Copy the Pre-built binary file and .env file from the previous stage
+# Copy the Pre-built binary file from the previous stage
 COPY --from=builder /app/main .
+
+# Copy the .env file from the builder stage to the final image
 COPY --from=builder /app/.env .
+
+# Copy the config.yaml file from the builder stage to the final image
+COPY --from=builder /app/config /config
 
 # Command to run the executable
 CMD ["/main"]
